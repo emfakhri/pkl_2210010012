@@ -1,57 +1,106 @@
-<?php include 'config/database.php'; ?>
+<?php
+session_start();
+if (!isset($_SESSION['login']) || $_SESSION['role'] != 'siswa') {
+    header("Location: auth/login.php");
+    exit;
+}
 
-<!DOCTYPE html>
-<html>
+include 'config/db.php';
+include 'includes/header.php';
 
-<head>
-    <title>Form Pendaftaran PPDB</title>
-    <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
-</head>
+$user_id = $_SESSION['user_id'];
 
-<body>
+// cek apakah siswa sudah mengisi form
+$cek = mysqli_query($conn, "SELECT * FROM students WHERE user_id='$user_id'");
+$data = mysqli_fetch_assoc($cek);
 
-    <div class="container mt-5">
-        <h3>Form Pendaftaran Siswa</h3>
+// simpan data
+if (isset($_POST['simpan'])) {
+    $nisn = $_POST['nisn'];
+    $nama = $_POST['nama'];
+    $jk = $_POST['jk'];
+    $tempat = $_POST['tempat_lahir'];
+    $tgl = $_POST['tanggal_lahir'];
+    $asal = $_POST['asal_sekolah'];
+    $alamat = $_POST['alamat'];
+    $ortu = $_POST['nama_ortu'];
 
-        <form method="post">
-            <div class="form-group">
-                <label>Nama Lengkap</label>
-                <input type="text" name="nama" class="form-control" required>
-            </div>
+    if ($data) {
+        // update
+        mysqli_query($conn, "UPDATE students SET
+            nisn='$nisn',
+            nama='$nama',
+            jk='$jk',
+            tempat_lahir='$tempat',
+            tanggal_lahir='$tgl',
+            asal_sekolah='$asal',
+            alamat='$alamat',
+            nama_ortu='$ortu'
+            WHERE user_id='$user_id'
+        ");
+    } else {
+        // insert
+        mysqli_query($conn, "INSERT INTO students
+        (user_id, nisn, nama, jk, tempat_lahir, tanggal_lahir, asal_sekolah, alamat, nama_ortu)
+        VALUES
+        ('$user_id','$nisn','$nama','$jk','$tempat','$tgl','$asal','$alamat','$ortu')
+        ");
+    }
 
-            <div class="form-group">
-                <label>NISN</label>
-                <input type="text" name="nisn" class="form-control" required>
-            </div>
+    echo "<script>alert('Data berhasil disimpan');location='dashboard_siswa.php';</script>";
+}
+?>
 
-            <div class="form-group">
-                <label>Asal Sekolah</label>
-                <input type="text" name="asal_sekolah" class="form-control">
-            </div>
+<div class="container mt-4">
+    <h3 class="mb-3">Formulir Pendaftaran Siswa</h3>
 
-            <button type="submit" name="simpan" class="btn btn-success">
-                Simpan Pendaftaran
-            </button>
-        </form>
+    <form method="POST">
+        <div class="mb-3">
+            <label>NISN</label>
+            <input type="text" name="nisn" class="form-control" required value="<?= $data['nisn'] ?? '' ?>">
+        </div>
 
-        <?php
-        if (isset($_POST['simpan'])) {
-            $nama = $_POST['nama'];
-            $nisn = $_POST['nisn'];
-            $asal = $_POST['asal_sekolah'];
+        <div class="mb-3">
+            <label>Nama Lengkap</label>
+            <input type="text" name="nama" class="form-control" required value="<?= $data['nama'] ?? '' ?>">
+        </div>
 
-            mysqli_query(
-                $koneksi,
-                "INSERT INTO siswa VALUES (NULL,'$nama','$nisn','$asal','menunggu')"
-            );
+        <div class="mb-3">
+            <label>Jenis Kelamin</label>
+            <select name="jk" class="form-control" required>
+                <option value="">-- Pilih --</option>
+                <option value="L" <?= ($data['jk'] ?? '') == 'L' ? 'selected' : '' ?>>Laki-laki</option>
+                <option value="P" <?= ($data['jk'] ?? '') == 'P' ? 'selected' : '' ?>>Perempuan</option>
+            </select>
+        </div>
 
-            echo "<div class='alert alert-success mt-3'>
-                Pendaftaran berhasil!
-              </div>";
-        }
-        ?>
-    </div>
+        <div class="mb-3">
+            <label>Tempat Lahir</label>
+            <input type="text" name="tempat_lahir" class="form-control" value="<?= $data['tempat_lahir'] ?? '' ?>">
+        </div>
 
-</body>
+        <div class="mb-3">
+            <label>Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir" class="form-control" value="<?= $data['tanggal_lahir'] ?? '' ?>">
+        </div>
 
-</html>
+        <div class="mb-3">
+            <label>Asal Sekolah</label>
+            <input type="text" name="asal_sekolah" class="form-control" value="<?= $data['asal_sekolah'] ?? '' ?>">
+        </div>
+
+        <div class="mb-3">
+            <label>Alamat</label>
+            <textarea name="alamat" class="form-control"><?= $data['alamat'] ?? '' ?></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Nama Orang Tua / Wali</label>
+            <input type="text" name="nama_ortu" class="form-control" value="<?= $data['nama_ortu'] ?? '' ?>">
+        </div>
+
+        <button name="simpan" class="btn btn-primary">Simpan Data</button>
+    </form>
+</div>
+
+<?php include 'includes/footer.php'; ?>
