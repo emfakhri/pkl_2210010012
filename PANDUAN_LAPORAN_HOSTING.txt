@@ -1,0 +1,23 @@
+PANDUAN FITUR LAPORAN PPDB
+===========================
+
+File baru:
+- admin/laporan.php       : pusat laporan + filter
+- admin/laporan_pdf.php   : cetak PDF sesuai filter
+- admin/laporan_excel.php : unduh CSV yang bisa dibuka di Excel
+
+Koneksi database:
+- Host     : localhost
+- Database : uqac5968_ppdb_db
+- Username : uqac5968_pmbm
+- Password : uqalmadani123
+
+PENTING:
+1. Pastikan user database sudah diberi ALL PRIVILEGES ke database uqac5968_ppdb_db.
+2. Pastikan tabel students sudah di-import.
+3. Upload seluruh isi project ke hosting.
+4. Login admin lalu buka Dashboard > Laporan PPDB.
+5. Tombol PDF menghasilkan laporan lengkap.
+6. Tombol Excel/CSV menghasilkan file CSV yang dapat dibuka dengan Microsoft Excel.
+
+Untuk keamanan, setelah berhasil melakukan koneksi database, sebaiknya password database diganti dan file config/database.php diperbarui.
