@@ -1,3 +1,3 @@
 <footer>
-    <p>© <?= date('Y'); ?> PPDB Online</p>
+    <p>© <?= date('Y'); ?> PMBM Online</p>
 </footer>

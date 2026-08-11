@@ -96,7 +96,7 @@ body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}.brand{color
 <a href="cetak_bukti.php" class="btn btn-block btn-outline-success"><i class="fas fa-print mr-2"></i>Cetak Bukti</a>
 </div></div>
 <div class="card"><div class="card-body"><h5 class="section-title"><i class="fas fa-info-circle mr-2"></i>Informasi</h5>
-<p class="small text-muted mb-0">Pastikan seluruh data sesuai dokumen resmi. Setelah dikirim, data akan diperiksa oleh panitia PPDB.</p>
+<p class="small text-muted mb-0">Pastikan seluruh data sesuai dokumen resmi. Setelah dikirim, data akan diperiksa oleh panitia PMBM.</p>
 </div></div>
 </div>
 </div>

@@ -222,7 +222,7 @@ function tampil($nilai)
 */
 
 $nomor_pendaftaran =
-    'PPDB-' .
+    'PMBM-' .
     date(
         'Y',
         strtotime($data['created_at'])
@@ -1349,7 +1349,7 @@ body {
 
                 <br>
 
-                Panitia PPDB
+                Panitia PMBM
 
 
                 <div class="signature-space"></div>

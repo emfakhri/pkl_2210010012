@@ -87,7 +87,7 @@ table{width:100%;border-collapse:collapse;margin-bottom:15px}th,td{border:1px so
 h4{color:#075e35;margin:10px 0 6px}.small{font-size:8px;color:#666}
 </style></head><body>';
 
-$html .= '<div class="header"><h2>MTs ULUMUL QUR\'AN AL MADANI</h2><h3>LAPORAN PPDB</h3><div>'.$filterLine.'</div></div>';
+$html .= '<div class="header"><h2>MTs ULUMUL QUR\'AN AL MADANI</h2><h3>LAPORAN PMBM</h3><div>'.$filterLine.'</div></div>';
 
 $html .= '<table class="stats"><tr>
 <td><b>'.$total.'</b><br>Total Pendaftar</td>

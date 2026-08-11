@@ -23,7 +23,7 @@ $where = $conditions ? ' WHERE '.implode(' AND ',$conditions) : '';
 $q = mysqli_query($conn, "SELECT nama,nisn,nik,jk,nama_sekolah_asal,domisili_murid,status,created_at FROM students $where ORDER BY id DESC");
 
 header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename="laporan_ppdb.csv"');
+header('Content-Disposition: attachment; filename="laporan_pmbm.csv"');
 echo "\xEF\xBB\xBF";
 
 $out = fopen('php://output','w');

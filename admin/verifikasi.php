@@ -59,14 +59,14 @@ foreach($groups as $fs)foreach($fs as $f)$label[$f]=ucwords(str_replace('_',' ',
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Verifikasi Pendaftar - PPDB</title>
+<title>Verifikasi Pendaftar - PMBM</title>
 <link rel="stylesheet" href="../assets/css/sb-admin-2.min.css"><link rel="stylesheet" href="../assets/vendor/fontawesome-free/css/all.min.css">
 <style>
 :root{--gd:#075e35;--g:#0b7a45;--y:#f5c400}body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}.brand{color:#fff!important;text-decoration:none;font-weight:800}.brand img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:50%;padding:3px;margin-right:10px}.hero{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;padding:30px 0}.card{border:0;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}.table thead{background:#edf8f1;color:var(--gd)}.section-title{font-weight:900;color:var(--gd);border-bottom:2px solid #edf8f1;padding-bottom:9px;margin-bottom:15px}.field{padding:8px 0;border-bottom:1px solid #eef1ef}.field .lbl{font-size:12px;color:#777}.field .val{font-weight:600;word-break:break-word}.btn-y{background:var(--y);color:#493d00;font-weight:800}.detail-card{position:sticky;top:15px}
 </style>
 </head>
 <body>
-<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PPDB - Verifikasi</span></a><div><a href="../dashboard_admin.php" class="btn btn-sm btn-outline-light mr-1"><i class="fas fa-home"></i> Dashboard</a><a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i></a></div></div></nav>
+<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PMBM - Verifikasi</span></a><div><a href="../dashboard_admin.php" class="btn btn-sm btn-outline-light mr-1"><i class="fas fa-home"></i> Dashboard</a><a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i></a></div></div></nav>
 <section class="hero"><div class="container"><h1 class="h2 font-weight-bold mb-1">Verifikasi Pendaftar</h1><p class="mb-0">Periksa seluruh data sebelum menentukan status pendaftaran.</p></div></section>
 
 <div class="container my-4">

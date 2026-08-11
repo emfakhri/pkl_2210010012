@@ -130,7 +130,7 @@ $homeOwnership = ['MILIK SENDIRI','RUMAH ORANG TUA','RUMAH SAUDARA / KERABAT','R
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formulir PPDB - MTs Ulumul Qur'an Al Madani</title>
+<title>Formulir PMBM - MTs Ulumul Qur'an Al Madani</title>
 <link rel="stylesheet" href="assets/css/sb-admin-2.min.css">
 <link rel="stylesheet" href="assets/vendor/fontawesome-free/css/all.min.css">
 <style>

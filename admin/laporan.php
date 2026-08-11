@@ -148,7 +148,7 @@ function tableReport($title, $rows) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Laporan PPDB</title>
+<title>Laporan PMBM</title>
 <link rel="stylesheet" href="../assets/css/sb-admin-2.min.css">
 <link rel="stylesheet" href="../assets/vendor/fontawesome-free/css/all.min.css">
 <style>
@@ -167,7 +167,7 @@ body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}
 <body>
 <nav class="topbar">
 <div class="container d-flex justify-content-between align-items-center">
-<a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PPDB - Laporan Admin</span></a>
+<a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PMBM - Laporan Admin</span></a>
 <div>
 <a href="../dashboard_admin.php" class="btn btn-sm btn-outline-light mr-1"><i class="fas fa-home"></i> Dashboard</a>
 <a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i> Keluar</a>
@@ -177,7 +177,7 @@ body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}
 
 <section class="hero">
 <div class="container">
-<h1 class="h2 font-weight-bold mb-1">Laporan PPDB</h1>
+<h1 class="h2 font-weight-bold mb-1">Laporan PMBM</h1>
 <p class="mb-0">Statistik, rekap, dan analisis data pendaftar.</p>
 </div>
 </section>

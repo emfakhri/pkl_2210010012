@@ -28,14 +28,14 @@ if($q){while($r=mysqli_fetch_assoc($q))$students[]=$r;}
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard Admin - PPDB</title>
+<title>Dashboard Admin - PMBM</title>
 <link rel="stylesheet" href="assets/css/sb-admin-2.min.css"><link rel="stylesheet" href="assets/vendor/fontawesome-free/css/all.min.css">
 <style>
 :root{--gd:#075e35;--g:#0b7a45;--y:#f5c400}body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}.brand{color:#fff!important;text-decoration:none;font-weight:800}.brand img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:50%;padding:3px;margin-right:10px}.hero{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;padding:34px 0}.card{border:0;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}.stat{border-left:5px solid var(--g)}.table thead{background:#edf8f1;color:var(--gd)}.badge-status{padding:7px 10px;border-radius:15px}.btn-main{background:var(--y);color:#493d00;font-weight:800}
 </style>
 </head>
 <body>
-<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="assets/img/logo.png" alt="Logo"><span>PPDB - Panel Admin</span></a><a href="logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt mr-1"></i> Keluar</a></div></nav>
+<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="assets/img/logo.png" alt="Logo"><span>PMBM - Panel Admin</span></a><a href="logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt mr-1"></i> Keluar</a></div></nav>
 <section class="hero"><div class="container"><div class="small text-warning font-weight-bold">ADMINISTRATOR</div><h1 class="h2 font-weight-bold mb-1">Dashboard Admin</h1><p class="mb-0">Kelola pendaftaran dan verifikasi calon murid.</p></div></section>
 <div class="container my-4">
 <div class="row">
@@ -45,7 +45,7 @@ if($q){while($r=mysqli_fetch_assoc($q))$students[]=$r;}
 </div>
 <div class="card mb-4"><div class="card-body">
 <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="font-weight-bold text-success mb-0">Pendaftar Terbaru</h5><a href="admin/verifikasi.php" class="btn btn-main btn-sm"><i class="fas fa-search mr-1"></i> Kelola Verifikasi</a>
-<a href="admin/laporan.php" class="btn btn-success btn-sm ml-2"><i class="fas fa-chart-bar mr-1"></i> Laporan PPDB</a></div>
+<a href="admin/laporan.php" class="btn btn-success btn-sm ml-2"><i class="fas fa-chart-bar mr-1"></i> Laporan PMBM</a></div>
 <div class="table-responsive"><table class="table table-hover">
 <thead><tr><th>No</th><th>Nama</th><th>NISN</th><th>Asal Sekolah</th><th>Status</th><th>Aksi</th></tr></thead>
 <tbody>

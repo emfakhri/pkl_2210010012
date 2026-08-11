@@ -276,7 +276,7 @@
 <section class="section">
 
     <h2 class="section-title">Jadwal Pendaftaran</h2>
-    <p class="section-subtitle">Tahapan PPDB</p>
+    <p class="section-subtitle">Tahapan PMBM</p>
 
     <div class="schedule-card">
         <div class="schedule-title">01. Pendaftaran</div>
