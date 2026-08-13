@@ -1,23 +1,38 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['login']) || ($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: ../auth/login.php");
     exit;
 }
 
-require '../dompdf/autoload.inc.php';
-require '../config/database.php';
-
-use Dompdf\Dompdf;
+require_once '../config/database.php';
 
 function e($v) {
     return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-$status = $_GET['status'] ?? '';
-$jk = $_GET['jk'] ?? '';
-$sekolah = $_GET['sekolah'] ?? '';
+function getRows($conn, $sql) {
+    $q = mysqli_query($conn, $sql);
+    $rows = [];
+
+    if ($q) {
+        while ($r = mysqli_fetch_assoc($q)) {
+            $rows[] = $r;
+        }
+    }
+
+    return $rows;
+}
+
+/*
+|--------------------------------------------------------------------------
+| FILTER
+|--------------------------------------------------------------------------
+*/
+$status   = $_GET['status'] ?? '';
+$jk       = $_GET['jk'] ?? '';
+$sekolah  = $_GET['sekolah'] ?? '';
 $domisili = $_GET['domisili'] ?? '';
 
 $conditions = [];
@@ -27,103 +42,376 @@ if (in_array($status, ['Menunggu Verifikasi', 'Diterima', 'Ditolak'], true)) {
 } else {
     $status = '';
 }
-if ($jk !== '') $conditions[] = "jk='" . mysqli_real_escape_string($conn, $jk) . "'";
-if ($sekolah !== '') $conditions[] = "nama_sekolah_asal='" . mysqli_real_escape_string($conn, $sekolah) . "'";
-if ($domisili !== '') $conditions[] = "domisili_murid='" . mysqli_real_escape_string($conn, $domisili) . "'";
+
+if ($jk !== '') {
+    $conditions[] = "jk='" . mysqli_real_escape_string($conn, $jk) . "'";
+}
+
+if ($sekolah !== '') {
+    $conditions[] = "nama_sekolah_asal='" . mysqli_real_escape_string($conn, $sekolah) . "'";
+}
+
+if ($domisili !== '') {
+    $conditions[] = "domisili_murid='" . mysqli_real_escape_string($conn, $domisili) . "'";
+}
 
 $where = $conditions ? ' WHERE ' . implode(' AND ', $conditions) : '';
 
-function countReport($conn, $where, $extra = '') {
-    $w = $where;
-    if ($extra !== '') $w .= ($w ? ' AND ' : ' WHERE ') . $extra;
-    $q = mysqli_query($conn, "SELECT COUNT(*) total FROM students $w");
-    return $q ? (int)mysqli_fetch_assoc($q)['total'] : 0;
+/*
+|--------------------------------------------------------------------------
+| PILIH REPORT
+|--------------------------------------------------------------------------
+*/
+$report = isset($_GET['report']) ? (int) $_GET['report'] : 0;
+
+if ($report < 1 || $report > 5) {
+    die('Report tidak ditemukan.');
 }
 
-function groupRows($conn, $field, $where) {
-    $safeField = preg_replace('/[^a-zA-Z0-9_]/', '', $field);
-    $q = mysqli_query($conn, "SELECT COALESCE(NULLIF($safeField,''),'Tidak diisi') label, COUNT(*) jumlah FROM students $where GROUP BY $safeField ORDER BY jumlah DESC, label ASC");
-    $rows = [];
-    if ($q) while ($r = mysqli_fetch_assoc($q)) $rows[] = $r;
-    return $rows;
+$title = '';
+
+/*
+|--------------------------------------------------------------------------
+| REPORT 1 - DATA SELURUH PENDAFTAR
+|--------------------------------------------------------------------------
+*/
+if ($report === 1) {
+
+    $title = 'Report 1 - Data Seluruh Pendaftar';
+
+    $students = getRows($conn, "
+        SELECT id, nama, nisn, nik, jk, nama_sekolah_asal,
+               domisili_murid, status, created_at
+        FROM students
+        $where
+        ORDER BY id DESC
+    ");
 }
 
-$total = countReport($conn, $where);
-$menunggu = countReport($conn, $where, "status='Menunggu Verifikasi'");
-$diterima = countReport($conn, $where, "status='Diterima'");
-$ditolak = countReport($conn, $where, "status='Ditolak'");
+/*
+|--------------------------------------------------------------------------
+| REPORT 2 - STATUS PENDAFTARAN
+|--------------------------------------------------------------------------
+*/
+elseif ($report === 2) {
 
-$q = mysqli_query($conn, "SELECT nama,nisn,nik,jk,nama_sekolah_asal,domisili_murid,status,created_at FROM students $where ORDER BY id DESC");
-$students = [];
-if ($q) while ($r = mysqli_fetch_assoc($q)) $students[] = $r;
+    $title = 'Report 2 - Status Pendaftaran';
 
-$reports = [
-    'Asal Sekolah' => groupRows($conn,'nama_sekolah_asal',$where),
-    'Jenis Kelamin' => groupRows($conn,'jk',$where),
-    'Domisili' => groupRows($conn,'domisili_murid',$where),
-    'Pendidikan Ayah' => groupRows($conn,'pendidikan_ayah',$where),
-    'Pendidikan Ibu' => groupRows($conn,'pendidikan_ibu',$where),
-    'Pekerjaan Ayah' => groupRows($conn,'pekerjaan_ayah',$where),
-    'Pekerjaan Ibu' => groupRows($conn,'pekerjaan_ibu',$where),
-    'Penghasilan Ayah' => groupRows($conn,'penghasilan_ayah',$where),
-    'Penghasilan Ibu' => groupRows($conn,'penghasilan_ibu',$where),
-    'Kebutuhan Khusus' => groupRows($conn,'kebutuhan_khusus',$where)
-];
-
-$filterText = [];
-if ($status) $filterText[] = "Status: ".e($status);
-if ($jk) $filterText[] = "Jenis Kelamin: ".e($jk);
-if ($sekolah) $filterText[] = "Asal Sekolah: ".e($sekolah);
-if ($domisili) $filterText[] = "Domisili: ".e($domisili);
-$filterLine = $filterText ? implode(' | ', $filterText) : 'Semua data';
-
-$html = '<!DOCTYPE html><html><head><meta charset="UTF-8">
-<style>
-@page{margin:25px 25px 35px 25px}
-body{font-family:DejaVu Sans,sans-serif;font-size:9px;color:#222}
-.header{text-align:center;margin-bottom:12px}.header h2{margin:0;font-size:16px}.header h3{margin:6px 0;font-size:12px}.filter{text-align:center;color:#555;margin-bottom:12px}
-.stats{width:100%;border-collapse:collapse;margin-bottom:15px}.stats td{border:1px solid #bbb;padding:7px;text-align:center}.stats b{font-size:14px}
-table{width:100%;border-collapse:collapse;margin-bottom:15px}th,td{border:1px solid #777;padding:4px}th{background:#edf8f1}.center{text-align:center}
-h4{color:#075e35;margin:10px 0 6px}.small{font-size:8px;color:#666}
-</style></head><body>';
-
-$html .= '<div class="header"><h2>MTs ULUMUL QUR\'AN AL MADANI</h2><h3>LAPORAN PMBM</h3><div>'.$filterLine.'</div></div>';
-
-$html .= '<table class="stats"><tr>
-<td><b>'.$total.'</b><br>Total Pendaftar</td>
-<td><b>'.$menunggu.'</b><br>Menunggu Verifikasi</td>
-<td><b>'.$diterima.'</b><br>Diterima</td>
-<td><b>'.$ditolak.'</b><br>Ditolak</td>
-</tr></table>';
-
-$html .= '<h4>Laporan Pendaftar</h4><table><tr>
-<th width="4%">No</th><th>Nama</th><th>NISN</th><th>JK</th><th>Asal Sekolah</th><th>Domisili</th><th>Status</th><th>Tanggal</th></tr>';
-$no=1;
-foreach($students as $s){
-    $html .= '<tr><td class="center">'.$no.'</td><td>'.e($s['nama']).'</td><td>'.e($s['nisn']).'</td><td class="center">'.e($s['jk']).'</td><td>'.e($s['nama_sekolah_asal']).'</td><td>'.e($s['domisili_murid']).'</td><td>'.e($s['status']).'</td><td>'.e($s['created_at']).'</td></tr>';
-    $no++;
-}
-if (!$students) $html .= '<tr><td colspan="8" class="center">Belum ada data.</td></tr>';
-$html .= '</table>';
-
-foreach($reports as $title=>$rows){
-    $html .= '<h4>'.$title.'</h4><table><tr><th>Kategori</th><th width="100">Jumlah</th></tr>';
-    if (!$rows) {
-        $html .= '<tr><td colspan="2" class="center">Belum ada data.</td></tr>';
-    } else {
-        foreach($rows as $r) $html .= '<tr><td>'.e($r['label']).'</td><td class="center">'.(int)$r['jumlah'].'</td></tr>';
-    }
-    $html .= '</table>';
+    $rows = getRows($conn, "
+        SELECT
+            COALESCE(NULLIF(status, ''), 'Tidak diisi') AS label,
+            COUNT(*) AS jumlah
+        FROM students
+        $where
+        GROUP BY status
+        ORDER BY jumlah DESC, label ASC
+    ");
 }
 
-$html .= '<div class="small">Dicetak pada: '.date('d-m-Y H:i:s').'</div></body></html>';
+/*
+|--------------------------------------------------------------------------
+| REPORT 3 - JENIS KELAMIN
+|--------------------------------------------------------------------------
+*/
+elseif ($report === 3) {
 
-$pdf = new Dompdf();
-$pdf->loadHtml($html);
-$pdf->setPaper('A4','landscape');
-$pdf->render();
+    $title = 'Report 3 - Jenis Kelamin';
 
-$name='laporan_ppdb';
-if($status) $name.='_'.strtolower(str_replace(' ','_',$status));
-$pdf->stream($name.'.pdf',['Attachment'=>true]);
-exit;
+    $rows = getRows($conn, "
+        SELECT
+            COALESCE(NULLIF(jk, ''), 'Tidak diisi') AS label,
+            COUNT(*) AS jumlah
+        FROM students
+        $where
+        GROUP BY jk
+        ORDER BY jumlah DESC, label ASC
+    ");
+}
+
+/*
+|--------------------------------------------------------------------------
+| REPORT 4 - ASAL SEKOLAH
+|--------------------------------------------------------------------------
+*/
+elseif ($report === 4) {
+
+    $title = 'Report 4 - Asal Sekolah';
+
+    $rows = getRows($conn, "
+        SELECT
+            COALESCE(NULLIF(nama_sekolah_asal, ''), 'Tidak diisi') AS label,
+            COUNT(*) AS jumlah
+        FROM students
+        $where
+        GROUP BY nama_sekolah_asal
+        ORDER BY jumlah DESC, label ASC
+    ");
+}
+
+/*
+|--------------------------------------------------------------------------
+| REPORT 5 - DOMISILI
+|--------------------------------------------------------------------------
+*/
+elseif ($report === 5) {
+
+    $title = 'Report 5 - Domisili';
+
+    $rows = getRows($conn, "
+        SELECT
+            COALESCE(NULLIF(domisili_murid, ''), 'Tidak diisi') AS label,
+            COUNT(*) AS jumlah
+        FROM students
+        $where
+        GROUP BY domisili_murid
+        ORDER BY jumlah DESC, label ASC
+    ");
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><?= e($title) ?></title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #000;
+            margin: 0;
+            padding: 30px;
+            font-size: 12px;
+        }
+
+        .toolbar {
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #075e35;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            margin: 0 0 6px;
+            font-size: 20px;
+        }
+
+        .header p {
+            margin: 3px 0;
+        }
+
+        .filter-info {
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            vertical-align: top;
+        }
+
+        th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            .toolbar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="toolbar">
+    <button class="btn" onclick="window.print()">
+        Cetak / Simpan sebagai PDF
+    </button>
+
+    <a href="laporan.php" class="btn">
+        Kembali
+    </a>
+</div>
+
+<div class="header">
+    <h2><?= e($title) ?></h2>
+    <p>MTs Ulumul Qur'an Al Madani</p>
+    <p>Laporan Penerimaan Murid Baru</p>
+</div>
+
+<?php if ($status || $jk || $sekolah || $domisili): ?>
+<div class="filter-info">
+    <strong>Filter:</strong>
+
+    <?php if ($status): ?>
+        Status: <?= e($status) ?> |
+    <?php endif; ?>
+
+    <?php if ($jk): ?>
+        Jenis Kelamin: <?= e($jk) ?> |
+    <?php endif; ?>
+
+    <?php if ($sekolah): ?>
+        Asal Sekolah: <?= e($sekolah) ?> |
+    <?php endif; ?>
+
+    <?php if ($domisili): ?>
+        Domisili: <?= e($domisili) ?>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
+
+<?php if ($report === 1): ?>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="5%">No</th>
+                <th>Nama</th>
+                <th>NISN</th>
+                <th>JK</th>
+                <th>Asal Sekolah</th>
+                <th>Domisili</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php if (empty($students)): ?>
+
+            <tr>
+                <td colspan="8" class="center">
+                    Belum ada data.
+                </td>
+            </tr>
+
+        <?php else: ?>
+
+            <?php foreach ($students as $i => $s): ?>
+
+                <tr>
+                    <td class="center"><?= $i + 1 ?></td>
+                    <td><?= e($s['nama']) ?></td>
+                    <td><?= e($s['nisn']) ?></td>
+                    <td><?= e($s['jk']) ?></td>
+                    <td><?= e($s['nama_sekolah_asal']) ?></td>
+                    <td><?= e($s['domisili_murid']) ?></td>
+                    <td><?= e($s['status']) ?></td>
+                    <td><?= e($s['created_at']) ?></td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
+        </tbody>
+    </table>
+
+
+<?php else: ?>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="10%">No</th>
+                <th>Kategori</th>
+                <th width="20%">Jumlah</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php if (empty($rows)): ?>
+
+            <tr>
+                <td colspan="3" class="center">
+                    Belum ada data.
+                </td>
+            </tr>
+
+        <?php else: ?>
+
+            <?php foreach ($rows as $i => $row): ?>
+
+                <tr>
+                    <td class="center"><?= $i + 1 ?></td>
+                    <td><?= e($row['label']) ?></td>
+                    <td class="center"><?= (int) $row['jumlah'] ?></td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
+        </tbody>
+    </table>
+
+<?php endif; ?>
+
+
+<div class="footer">
+    <p>
+        Dicetak pada: <?= date('d-m-Y H:i') ?>
+    </p>
+</div>
+
+<script>
+window.onload = function () {
+    window.print();
+};
+</script>
+
+</body>
+</html>

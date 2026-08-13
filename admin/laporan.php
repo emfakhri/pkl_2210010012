@@ -80,51 +80,28 @@ $domisiliRows = getRows($conn, "
     FROM students $where GROUP BY domisili_murid ORDER BY jumlah DESC, label ASC
 ");
 
-$pendidikanAyah = getRows($conn, "
-    SELECT COALESCE(NULLIF(pendidikan_ayah,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY pendidikan_ayah ORDER BY jumlah DESC, label ASC
-");
-
-$pendidikanIbu = getRows($conn, "
-    SELECT COALESCE(NULLIF(pendidikan_ibu,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY pendidikan_ibu ORDER BY jumlah DESC, label ASC
-");
-
-$pekerjaanAyah = getRows($conn, "
-    SELECT COALESCE(NULLIF(pekerjaan_ayah,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY pekerjaan_ayah ORDER BY jumlah DESC, label ASC
-");
-
-$pekerjaanIbu = getRows($conn, "
-    SELECT COALESCE(NULLIF(pekerjaan_ibu,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY pekerjaan_ibu ORDER BY jumlah DESC, label ASC
-");
-
-$penghasilanAyah = getRows($conn, "
-    SELECT COALESCE(NULLIF(penghasilan_ayah,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY penghasilan_ayah ORDER BY jumlah DESC, label ASC
-");
-
-$penghasilanIbu = getRows($conn, "
-    SELECT COALESCE(NULLIF(penghasilan_ibu,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY penghasilan_ibu ORDER BY jumlah DESC, label ASC
-");
-
-$kebutuhanKhusus = getRows($conn, "
-    SELECT COALESCE(NULLIF(kebutuhan_khusus,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
-    FROM students $where GROUP BY kebutuhan_khusus ORDER BY jumlah DESC, label ASC
+$statusRows = getRows($conn, "
+    SELECT COALESCE(NULLIF(status,''),'Tidak diisi') AS label, COUNT(*) AS jumlah
+    FROM students $where GROUP BY status ORDER BY jumlah DESC, label ASC
 ");
 
 $sekolahOptions = getRows($conn, "SELECT DISTINCT nama_sekolah_asal AS value FROM students WHERE nama_sekolah_asal IS NOT NULL AND nama_sekolah_asal<>'' ORDER BY nama_sekolah_asal");
 $jkOptions = getRows($conn, "SELECT DISTINCT jk AS value FROM students WHERE jk IS NOT NULL AND jk<>'' ORDER BY jk");
 $domisiliOptions = getRows($conn, "SELECT DISTINCT domisili_murid AS value FROM students WHERE domisili_murid IS NOT NULL AND domisili_murid<>'' ORDER BY domisili_murid");
 
-function tableReport($title, $rows) {
+function tableReport($title, $rows, $report, $query) {
     ob_start(); ?>
     <div class="col-lg-6 mb-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="section-title"><?= e($title) ?></h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="section-title mb-0"><?= e($title) ?></h5>
+                    <a href="laporan_pdf.php?report=<?= (int)$report ?>&<?= e($query) ?>"
+                       target="_blank"
+                       class="btn btn-sm btn-danger">
+                        <i class="fas fa-print mr-1"></i> Cetak
+                    </a>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
                         <thead><tr><th>Kategori</th><th width="90">Jumlah</th></tr></thead>
@@ -225,14 +202,13 @@ body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}
 <?php
 $query = http_build_query(['status'=>$status,'jk'=>$jk,'sekolah'=>$sekolah,'domisili'=>$domisili]);
 ?>
-<a href="laporan_pdf.php?<?= e($query) ?>" target="_blank" class="btn btn-danger mr-2"><i class="fas fa-file-pdf mr-1"></i> PDF</a>
 <a href="laporan_excel.php?<?= e($query) ?>" class="btn btn-primary"><i class="fas fa-file-excel mr-1"></i> Excel/CSV</a>
 </div>
 </form>
 <p class="small-note mb-0 mt-3">Filter berlaku untuk statistik, tabel pendaftar, dan analisis di halaman ini.</p>
 </div>
 
-<h5 class="section-title"><i class="fas fa-chart-pie mr-2"></i>Statistik Pendaftar</h5>
+<h5 class="section-title"><i class="fas fa-chart-pie mr-2"></i>Ringkasan Data</h5>
 <div class="row mb-4">
 <?php foreach([
 ['Total Pendaftar',$total,'fa-users','success'],
@@ -251,8 +227,13 @@ $query = http_build_query(['status'=>$status,'jk'=>$jk,'sekolah'=>$sekolah,'domi
 <div class="card mb-4">
 <div class="card-body">
 <div class="d-flex justify-content-between align-items-center mb-3">
-<h5 class="section-title mb-0"><i class="fas fa-list mr-2"></i>Laporan Pendaftar</h5>
-<span class="small-note"><?= count($students) ?> data sesuai filter</span>
+<h5 class="section-title mb-0"><i class="fas fa-list mr-2"></i>Report 1 — Data Seluruh Pendaftar</h5>
+<div>
+    <span class="small-note mr-2"><?= count($students) ?> data sesuai filter</span>
+    <a href="laporan_pdf.php?report=1&<?= e($query) ?>" target="_blank" class="btn btn-sm btn-danger">
+        <i class="fas fa-print mr-1"></i> Cetak
+    </a>
+</div>
 </div>
 <div class="table-responsive">
 <table class="table table-hover table-sm">
@@ -274,40 +255,15 @@ $sc=stripos($s['status'],'tolak')!==false?'danger':(stripos($s['status'],'diteri
 </div>
 </div>
 
-<h5 class="section-title"><i class="fas fa-chart-bar mr-2"></i>Analisis Pendaftar</h5>
+<h5 class="section-title"><i class="fas fa-file-alt mr-2"></i>5 Report Utama</h5>
 <div class="row">
-<?= tableReport('Berdasarkan Asal Sekolah', $asalSekolah) ?>
-<?= tableReport('Berdasarkan Jenis Kelamin', $jenisKelamin) ?>
-<?= tableReport('Berdasarkan Domisili', $domisiliRows) ?>
-</div>
-
-<h5 class="section-title"><i class="fas fa-user-friends mr-2"></i>Data Orang Tua</h5>
-<div class="row">
-<?= tableReport('Pendidikan Ayah', $pendidikanAyah) ?>
-<?= tableReport('Pendidikan Ibu', $pendidikanIbu) ?>
-<?= tableReport('Pekerjaan Ayah', $pekerjaanAyah) ?>
-<?= tableReport('Pekerjaan Ibu', $pekerjaanIbu) ?>
-<?= tableReport('Penghasilan Ayah', $penghasilanAyah) ?>
-<?= tableReport('Penghasilan Ibu', $penghasilanIbu) ?>
-</div>
-
-<h5 class="section-title"><i class="fas fa-wheelchair mr-2"></i>Data Kebutuhan Khusus</h5>
-<div class="card mb-4">
-<div class="card-body">
-<div class="table-responsive">
-<table class="table table-sm table-hover mb-0">
-<thead><tr><th>Kebutuhan Khusus</th><th width="100">Jumlah</th></tr></thead>
-<tbody>
-<?php if(!$kebutuhanKhusus): ?><tr><td colspan="2" class="text-center text-muted">Belum ada data.</td></tr>
-<?php else: foreach($kebutuhanKhusus as $r): ?><tr><td><?= e($r['label']) ?></td><td class="font-weight-bold"><?= (int)$r['jumlah'] ?></td></tr><?php endforeach; endif; ?>
-</tbody>
-</table>
-</div>
-</div>
+<?= tableReport('Report 2 — Status Pendaftaran', $statusRows, 2, $query) ?>
+<?= tableReport('Report 3 — Jenis Kelamin', $jenisKelamin, 3, $query) ?>
+<?= tableReport('Report 4 — Asal Sekolah', $asalSekolah, 4, $query) ?>
+<?= tableReport('Report 5 — Domisili', $domisiliRows, 5, $query) ?>
 </div>
 
 <div class="text-right mb-4">
-<a href="laporan_pdf.php?<?= e($query) ?>" target="_blank" class="btn btn-danger"><i class="fas fa-file-pdf mr-1"></i> Cetak Laporan PDF</a>
 <a href="laporan_excel.php?<?= e($query) ?>" class="btn btn-primary"><i class="fas fa-file-excel mr-1"></i> Unduh Excel/CSV</a>
 </div>
 
