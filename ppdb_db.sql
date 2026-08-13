@@ -22,7 +22,6 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `students`
 --
@@ -99,18 +98,168 @@ CREATE TABLE `students` (
   `alamat_wali` text DEFAULT NULL,
   `status` varchar(40) DEFAULT 'Menunggu Verifikasi',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+    ON UPDATE current_timestamp()
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `user_id`, `nama_sekolah_asal`, `status_sekolah_asal`, `npsn_nsm_asal`, `alamat_sekolah_asal`, `nama`, `nisn`, `nik`, `tempat_lahir`, `tanggal_lahir`, `jk`, `jumlah_saudara`, `anak_ke`, `cita_cita`, `hobi`, `telepon`, `email`, `pembiaya_sekolah`, `pra_sekolah`, `imunisasi`, `no_kk`, `nama_kepala_keluarga`, `nama_ayah`, `status_ayah`, `nik_ayah`, `tanggal_lahir_ayah`, `pendidikan_ayah`, `pekerjaan_ayah`, `penghasilan_ayah`, `hp_ayah`, `nama_ibu`, `status_ibu`, `nik_ibu`, `tanggal_lahir_ibu`, `pendidikan_ibu`, `pekerjaan_ibu`, `penghasilan_ibu`, `hp_ibu`, `kepemilikan_rumah_ayah`, `provinsi_ayah`, `kabupaten_ayah`, `kecamatan_ayah`, `kelurahan_ayah`, `rt_ayah`, `rw_ayah`, `jalan_ayah`, `kode_pos_ayah`, `alamat_ibu_status`, `kepemilikan_rumah_ibu`, `provinsi_ibu`, `kabupaten_ibu`, `kecamatan_ibu`, `kelurahan_ibu`, `rt_ibu`, `rw_ibu`, `jalan_ibu`, `kode_pos_ibu`, `domisili_murid`, `transportasi`, `jarak_rumah`, `waktu_tempuh`, `kebutuhan_khusus`, `kebutuhan_disabilitas`, `status_wali`, `nama_wali`, `hp_wali`, `tinggal_bersama`, `alamat_wali`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 'MTs Ulumul Qur\'an Al Madani', 'SWASTA', '69787317', 'Jl. Guntung Manggis', 'Farid Ulatih', '1212637200', '6203032808940002', 'Banjarbaru', '2021-08-28', 'L', 1, 1, 'TNI', 'Kesenian', '081251561415', 'official.faridulatih@gmail.com', 'ORANGTUA', 'PERNAH TK / RA', 'Lengkap', '62030328080009', 'fahri', 'fahri', 'MASIH HIDUP', '6203032808940002', '2021-06-23', 'D1', 'Pensiunan', 'Rp. 1.800.001 - Rp. 2.500.000', '081251561415', 'anna', 'MASIH HIDUP', '62030808940002', '2021-06-16', 'D2', 'Polri', 'Rp. 2.500.001 - Rp. 3.500.000', '', 'MILIK SENDIRI', 'kalimantan selatan', 'banjarbaru', 'landasan ulin', 'guntung manggis', '18', '3', 'jl. guntung mnaggis', '70724', 'SAMA_DENGAN_AYAH', '', '', '', '', '', '', '', '', '', 'TINGGAL DENGAN ORANG TUA', 'SEPEDA / SEPEDA LISTRIK', 'ANTARA 5 – 10 KM', '10 - 19 Menit', 'TIDAK ADA', 'TIDAK ADA', '', '', '', '', '', 'Menunggu Verifikasi', '2026-08-09 10:14:17', '2026-08-09 10:14:17');
+INSERT INTO `students` (
+  `id`,
+  `user_id`,
+  `nama_sekolah_asal`,
+  `status_sekolah_asal`,
+  `npsn_nsm_asal`,
+  `alamat_sekolah_asal`,
+  `nama`,
+  `nisn`,
+  `nik`,
+  `tempat_lahir`,
+  `tanggal_lahir`,
+  `jk`,
+  `jumlah_saudara`,
+  `anak_ke`,
+  `cita_cita`,
+  `hobi`,
+  `telepon`,
+  `email`,
+  `pembiaya_sekolah`,
+  `pra_sekolah`,
+  `imunisasi`,
+  `no_kk`,
+  `nama_kepala_keluarga`,
+  `nama_ayah`,
+  `status_ayah`,
+  `nik_ayah`,
+  `tanggal_lahir_ayah`,
+  `pendidikan_ayah`,
+  `pekerjaan_ayah`,
+  `penghasilan_ayah`,
+  `hp_ayah`,
+  `nama_ibu`,
+  `status_ibu`,
+  `nik_ibu`,
+  `tanggal_lahir_ibu`,
+  `pendidikan_ibu`,
+  `pekerjaan_ibu`,
+  `penghasilan_ibu`,
+  `hp_ibu`,
+  `kepemilikan_rumah_ayah`,
+  `provinsi_ayah`,
+  `kabupaten_ayah`,
+  `kecamatan_ayah`,
+  `kelurahan_ayah`,
+  `rt_ayah`,
+  `rw_ayah`,
+  `jalan_ayah`,
+  `kode_pos_ayah`,
+  `alamat_ibu_status`,
+  `kepemilikan_rumah_ibu`,
+  `provinsi_ibu`,
+  `kabupaten_ibu`,
+  `kecamatan_ibu`,
+  `kelurahan_ibu`,
+  `rt_ibu`,
+  `rw_ibu`,
+  `jalan_ibu`,
+  `kode_pos_ibu`,
+  `domisili_murid`,
+  `transportasi`,
+  `jarak_rumah`,
+  `waktu_tempuh`,
+  `kebutuhan_khusus`,
+  `kebutuhan_disabilitas`,
+  `status_wali`,
+  `nama_wali`,
+  `hp_wali`,
+  `tinggal_bersama`,
+  `alamat_wali`,
+  `status`,
+  `created_at`,
+  `updated_at`
+) VALUES
+(
+  1,
+  2,
+  'MTs Ulumul Qur\'an Al Madani',
+  'SWASTA',
+  '69787317',
+  'Jl. Guntung Manggis',
+  'Farid Ulatih',
+  '1212637200',
+  '6203032808940002',
+  'Banjarbaru',
+  '2021-08-28',
+  'L',
+  1,
+  1,
+  'TNI',
+  'Kesenian',
+  '081251561415',
+  'official.faridulatih@gmail.com',
+  'ORANGTUA',
+  'PERNAH TK / RA',
+  'Lengkap',
+  '62030328080009',
+  'fahri',
+  'fahri',
+  'MASIH HIDUP',
+  '6203032808940002',
+  '2021-06-23',
+  'D1',
+  'Pensiunan',
+  'Rp. 1.800.001 - Rp. 2.500.000',
+  '081251561415',
+  'anna',
+  'MASIH HIDUP',
+  '62030808940002',
+  '2021-06-16',
+  'D2',
+  'Polri',
+  'Rp. 2.500.001 - Rp. 3.500.000',
+  '',
+  'MILIK SENDIRI',
+  'kalimantan selatan',
+  'banjarbaru',
+  'landasan ulin',
+  'guntung manggis',
+  '18',
+  '3',
+  'jl. guntung mnaggis',
+  '70724',
+  'SAMA_DENGAN_AYAH',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  'TINGGAL DENGAN ORANG TUA',
+  'SEPEDA / SEPEDA LISTRIK',
+  'ANTARA 5 – 10 KM',
+  '10 - 19 Menit',
+  'TIDAK ADA',
+  'TIDAK ADA',
+  '',
+  '',
+  '',
+  '',
+  '',
+  'Menunggu Verifikasi',
+  '2026-08-09 10:14:17',
+  '2026-08-09 10:14:17'
+);
+
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `users`
 --
@@ -123,18 +272,70 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `role` enum('admin','panitia','siswa') NOT NULL DEFAULT 'siswa',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+    ON UPDATE current_timestamp()
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `nama`, `email`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', 'admin@gmail.com', 'admin', '$2y$10$GnPW5T6wiQ1V/uakAPLV/O4HYCEqybuJuvNgok1n3GihVWxgoS9v2', 'admin', '2026-08-09 09:52:43', '2026-08-09 09:52:43'),
-(2, 'Farid Ulatih', 'official.faridulatih@gmail.com', '121263720009', '$2y$10$8UjrXt8ly62JqSNznl8BV.5v.UsMKWFK6EpmludU2C/JFr5LW2yRS', 'siswa', '2026-08-09 10:09:06', '2026-08-09 10:09:06'),
-(3, 'Alfaqih Arrasyid', 'alfaqiharrasyid@gmail.com', '69787317', '$2y$10$UAv3V/VWqQhp5O9G6gYehedDsUl3./eyrRuYtmd/lo9qo1ootARBK', 'siswa', '2026-08-10 01:09:22', '2026-08-10 01:09:22');
+INSERT INTO `users`
+(`id`, `nama`, `email`, `username`, `password`, `role`, `created_at`, `updated_at`)
+VALUES
+(
+  1,
+  'Administrator',
+  'admin@gmail.com',
+  'admin',
+  '$2y$10$GnPW5T6wiQ1V/uakAPLV/O4HYCEqybuJuvNgok1n3GihVWxgoS9v2',
+  'admin',
+  '2026-08-09 09:52:43',
+  '2026-08-09 09:52:43'
+),
+(
+  2,
+  'Farid Ulatih',
+  'official.faridulatih@gmail.com',
+  '121263720009',
+  '$2y$10$8UjrXt8ly62JqSNznl8BV.5v.UsMKWFK6EpmludU2C/JFr5LW2yRS',
+  'siswa',
+  '2026-08-09 10:09:06',
+  '2026-08-09 10:09:06'
+),
+(
+  3,
+  'Alfaqih Arrasyid',
+  'alfaqiharrasyid@gmail.com',
+  '69787317',
+  '$2y$10$UAv3V/VWqQhp5O9G6gYehedDsUl3./eyrRuYtmd/lo9qo1ootARBK',
+  'siswa',
+  '2026-08-10 01:09:22',
+  '2026-08-10 01:09:22'
+);
 
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `student_documents`
+--
+
+CREATE TABLE `student_documents` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `document_type` varchar(100) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `original_name` varchar(255) DEFAULT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
+
+
+-- --------------------------------------------------------
 --
 -- Indexes for dumped tables
 --
@@ -142,6 +343,7 @@ INSERT INTO `users` (`id`, `nama`, `email`, `username`, `password`, `role`, `cre
 --
 -- Indexes for table `students`
 --
+
 ALTER TABLE `students`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_id` (`user_id`),
@@ -149,14 +351,28 @@ ALTER TABLE `students`
   ADD KEY `idx_nik` (`nik`),
   ADD KEY `idx_status` (`status`);
 
+
 --
 -- Indexes for table `users`
 --
+
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`),
   ADD UNIQUE KEY `username` (`username`);
 
+
+--
+-- Indexes for table `student_documents`
+--
+
+ALTER TABLE `student_documents`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_student_document` (`student_id`, `document_type`),
+  ADD KEY `idx_student_id` (`student_id`);
+
+
+-- --------------------------------------------------------
 --
 -- AUTO_INCREMENT for dumped tables
 --
@@ -164,15 +380,47 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for table `students`
 --
+
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+  AUTO_INCREMENT=2;
+
 
 --
 -- AUTO_INCREMENT for table `users`
 --
+
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+  AUTO_INCREMENT=4;
+
+
+--
+-- AUTO_INCREMENT for table `student_documents`
+--
+
+ALTER TABLE `student_documents`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+
+-- --------------------------------------------------------
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `student_documents`
+--
+
+ALTER TABLE `student_documents`
+  ADD CONSTRAINT `fk_student_documents_student`
+  FOREIGN KEY (`student_id`)
+  REFERENCES `students` (`id`)
+  ON DELETE CASCADE;
+
+
 COMMIT;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

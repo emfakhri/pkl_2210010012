@@ -85,6 +85,23 @@ $statusRows = getRows($conn, "
     FROM students $where GROUP BY status ORDER BY jumlah DESC, label ASC
 ");
 
+$report4Rows = getRows($conn, "
+    SELECT nama_sekolah_asal, status_sekolah_asal, alamat_sekolah_asal
+    FROM students $where ORDER BY nama_sekolah_asal ASC
+");
+$report5Rows = getRows($conn, "
+    SELECT tinggal_bersama,
+           CASE WHEN alamat_ibu_status='SAMA_DENGAN_AYAH' OR alamat_ibu_status IS NULL OR alamat_ibu_status=''
+                THEN jalan_ayah ELSE jalan_ibu END AS alamat,
+           CASE WHEN alamat_ibu_status='SAMA_DENGAN_AYAH' OR alamat_ibu_status IS NULL OR alamat_ibu_status=''
+                THEN kelurahan_ayah ELSE kelurahan_ibu END AS kelurahan,
+           CASE WHEN alamat_ibu_status='SAMA_DENGAN_AYAH' OR alamat_ibu_status IS NULL OR alamat_ibu_status=''
+                THEN kecamatan_ayah ELSE kecamatan_ibu END AS kecamatan,
+           CASE WHEN alamat_ibu_status='SAMA_DENGAN_AYAH' OR alamat_ibu_status IS NULL OR alamat_ibu_status=''
+                THEN kabupaten_ayah ELSE kabupaten_ibu END AS kabupaten_kota
+    FROM students $where ORDER BY id DESC
+");
+
 $sekolahOptions = getRows($conn, "SELECT DISTINCT nama_sekolah_asal AS value FROM students WHERE nama_sekolah_asal IS NOT NULL AND nama_sekolah_asal<>'' ORDER BY nama_sekolah_asal");
 $jkOptions = getRows($conn, "SELECT DISTINCT jk AS value FROM students WHERE jk IS NOT NULL AND jk<>'' ORDER BY jk");
 $domisiliOptions = getRows($conn, "SELECT DISTINCT domisili_murid AS value FROM students WHERE domisili_murid IS NOT NULL AND domisili_murid<>'' ORDER BY domisili_murid");
@@ -227,7 +244,7 @@ $query = http_build_query(['status'=>$status,'jk'=>$jk,'sekolah'=>$sekolah,'domi
 <div class="card mb-4">
 <div class="card-body">
 <div class="d-flex justify-content-between align-items-center mb-3">
-<h5 class="section-title mb-0"><i class="fas fa-list mr-2"></i>Report 1 — Data Seluruh Pendaftar</h5>
+<h5 class="section-title mb-0"><i class="fas fa-list mr-2"></i>Laporan Data Seluruh Pendaftar</h5>
 <div>
     <span class="small-note mr-2"><?= count($students) ?> data sesuai filter</span>
     <a href="laporan_pdf.php?report=1&<?= e($query) ?>" target="_blank" class="btn btn-sm btn-danger">
@@ -255,12 +272,22 @@ $sc=stripos($s['status'],'tolak')!==false?'danger':(stripos($s['status'],'diteri
 </div>
 </div>
 
-<h5 class="section-title"><i class="fas fa-file-alt mr-2"></i>5 Report Utama</h5>
+<h5 class="section-title"><i class="fas fa-file-alt mr-2"></i>Laporan</h5>
 <div class="row">
-<?= tableReport('Report 2 — Status Pendaftaran', $statusRows, 2, $query) ?>
-<?= tableReport('Report 3 — Jenis Kelamin', $jenisKelamin, 3, $query) ?>
-<?= tableReport('Report 4 — Asal Sekolah', $asalSekolah, 4, $query) ?>
-<?= tableReport('Report 5 — Domisili', $domisiliRows, 5, $query) ?>
+<?= tableReport('Laporan Status Pendaftaran', $statusRows, 2, $query) ?>
+<?= tableReport('Laporan Jenis Kelamin', $jenisKelamin, 3, $query) ?>
+<div class="col-12 mb-4"><div class="card"><div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-3"><h5 class="section-title mb-0">Laporan Data Asal Sekolah</h5><a href="laporan_pdf.php?report=4&<?= e($query) ?>" target="_blank" class="btn btn-sm btn-danger">Cetak</a></div>
+<div class="table-responsive"><table class="table table-sm table-hover"><thead><tr><th>No</th><th>Nama Sekolah Asal</th><th>Status Sekolah</th><th>Alamat Sekolah Asal</th></tr></thead><tbody>
+<?php if(!$report4Rows): ?><tr><td colspan="4" class="text-center text-muted">Belum ada data.</td></tr><?php else: foreach($report4Rows as $i=>$r): $st=strtoupper(trim($r['status_sekolah_asal']??'')); $st=$st==='NEGERI'?'Negeri':($st==='SWASTA'?'Swasta':'-'); ?>
+<tr><td><?= $i+1 ?></td><td><?= e($r['nama_sekolah_asal']?:'-') ?></td><td><?= e($st) ?></td><td><?= e($r['alamat_sekolah_asal']?:'-') ?></td></tr><?php endforeach; endif; ?>
+</tbody></table></div></div></div></div>
+<div class="col-12 mb-4"><div class="card"><div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-3"><h5 class="section-title mb-0">Laporan Data Tempat Tinggal Siswa</h5><a href="laporan_pdf.php?report=5&<?= e($query) ?>" target="_blank" class="btn btn-sm btn-danger">Cetak</a></div>
+<div class="table-responsive"><table class="table table-sm table-hover"><thead><tr><th>No</th><th>Status Tempat Tinggal</th><th>Alamat</th><th>Kelurahan</th><th>Kecamatan</th><th>Kabupaten / Kota</th></tr></thead><tbody>
+<?php if(!$report5Rows): ?><tr><td colspan="6" class="text-center text-muted">Belum ada data.</td></tr><?php else: foreach($report5Rows as $i=>$r): ?>
+<tr><td><?= $i+1 ?></td><td><?= e($r['tinggal_bersama']?:'-') ?></td><td><?= e($r['alamat']?:'-') ?></td><td><?= e($r['kelurahan']?:'-') ?></td><td><?= e($r['kecamatan']?:'-') ?></td><td><?= e($r['kabupaten_kota']?:'-') ?></td></tr><?php endforeach; endif; ?>
+</tbody></table></div></div></div></div>
 </div>
 
 <div class="text-right mb-4">
