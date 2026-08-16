@@ -1070,6 +1070,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+    
+        .btn-back {
+            display: inline-block;
+            background: #075e35;
+            color: white;
+            padding: 10px 17px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 18px;
+            transition: .2s;
+        }
+
+        .btn-back:hover {
+            background: #0b7a45;
+            color: white;
+            transform: translateY(-1px);
+        }
+
     </style>
 
 </head>
@@ -1137,6 +1157,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 -->
 
 <div class="container">
+
+    <a href="dashboard_siswa.php" class="btn-back">
+    ← Kembali ke Dashboard
+</a>
+
 
 
     <!-- HEADER -->

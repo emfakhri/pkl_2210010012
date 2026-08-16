@@ -54,19 +54,67 @@ $groups=[
 ];
 $label=[];
 foreach($groups as $fs)foreach($fs as $f)$label[$f]=ucwords(str_replace('_',' ',$f));
+
+/*
+|--------------------------------------------------------------------------
+| BERKAS PENDAFTAR
+|--------------------------------------------------------------------------
+| File disimpan oleh upload_berkas.php dengan pola:
+| user_id_jenis_berkas_timestamp.ext
+|--------------------------------------------------------------------------
+*/
+$jenis_berkas_list=[
+    'kk'=>'Kartu Keluarga',
+    'akta'=>'Akta Kelahiran',
+    'ijazah'=>'Ijazah / Surat Keterangan Aktif',
+    'foto'=>'Pas Foto',
+    'kip'=>'KTP Orang Tua',
+    'lainnya'=>'Nomor Induk Siswa Nasional (NISN)'
+];
+
+function cariBerkas($user_id,$jenis_berkas){
+    $dir=__DIR__.'/../uploads/';
+    if(!is_dir($dir)) return null;
+
+    $prefix=(string)$user_id.'_'.$jenis_berkas.'_';
+    $files=[];
+
+    $items=scandir($dir);
+    if($items===false) return null;
+
+    foreach($items as $item){
+        if($item==='.'||$item==='..') continue;
+        $full=$dir.$item;
+        if(!is_file($full)) continue;
+        if(strpos($item,$prefix)!==0) continue;
+
+        $ext=strtolower(pathinfo($item,PATHINFO_EXTENSION));
+        if(!in_array($ext,['jpg','jpeg','png','pdf'],true)) continue;
+
+        $files[]=$full;
+    }
+
+    if(!$files) return null;
+
+    usort($files,function($a,$b){
+        return filemtime($b)<=>filemtime($a);
+    });
+
+    return basename($files[0]);
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Verifikasi Pendaftar - PMBM</title>
+<title>Verifikasi Pendaftar - PPDB</title>
 <link rel="stylesheet" href="../assets/css/sb-admin-2.min.css"><link rel="stylesheet" href="../assets/vendor/fontawesome-free/css/all.min.css">
 <style>
-:root{--gd:#075e35;--g:#0b7a45;--y:#f5c400}body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}.brand{color:#fff!important;text-decoration:none;font-weight:800}.brand img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:50%;padding:3px;margin-right:10px}.hero{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;padding:30px 0}.card{border:0;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}.table thead{background:#edf8f1;color:var(--gd)}.section-title{font-weight:900;color:var(--gd);border-bottom:2px solid #edf8f1;padding-bottom:9px;margin-bottom:15px}.field{padding:8px 0;border-bottom:1px solid #eef1ef}.field .lbl{font-size:12px;color:#777}.field .val{font-weight:600;word-break:break-word}.btn-y{background:var(--y);color:#493d00;font-weight:800}.detail-card{position:sticky;top:15px}
+:root{--gd:#075e35;--g:#0b7a45;--y:#f5c400}body{background:#f5f8f6}.topbar{background:var(--gd);padding:12px 0}.brand{color:#fff!important;text-decoration:none;font-weight:800}.brand img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:50%;padding:3px;margin-right:10px}.hero{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;padding:30px 0}.card{border:0;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}.table thead{background:#edf8f1;color:var(--gd)}.section-title{font-weight:900;color:var(--gd);border-bottom:2px solid #edf8f1;padding-bottom:9px;margin-bottom:15px}.field{padding:8px 0;border-bottom:1px solid #eef1ef}.field .lbl{font-size:12px;color:#777}.field .val{font-weight:600;word-break:break-word}.btn-y{background:var(--y);color:#493d00;font-weight:800}.detail-card{position:sticky;top:15px}.doc-row{border:1px solid #e8eee9;border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fbfdfb}.doc-name{font-weight:700;color:var(--gd)}.doc-file{font-size:12px;color:#777;word-break:break-all}.doc-missing{color:#999;font-size:13px}.btn-view{background:var(--gd);color:#fff;font-weight:700}.btn-view:hover{background:var(--g);color:#fff}
 </style>
 </head>
 <body>
-<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PMBM - Verifikasi</span></a><div><a href="../dashboard_admin.php" class="btn btn-sm btn-outline-light mr-1"><i class="fas fa-home"></i> Dashboard</a><a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i></a></div></div></nav>
+<nav class="topbar"><div class="container d-flex justify-content-between align-items-center"><a href="../index.php" class="brand d-flex align-items-center"><img src="../assets/img/logo.png" alt="Logo"><span>PPDB - Verifikasi</span></a><div><a href="../dashboard_admin.php" class="btn btn-sm btn-outline-light mr-1"><i class="fas fa-home"></i> Dashboard</a><a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="fas fa-sign-out-alt"></i></a></div></div></nav>
 <section class="hero"><div class="container"><h1 class="h2 font-weight-bold mb-1">Verifikasi Pendaftar</h1><p class="mb-0">Periksa seluruh data sebelum menentukan status pendaftaran.</p></div></section>
 
 <div class="container my-4">
@@ -100,6 +148,37 @@ foreach($groups as $fs)foreach($fs as $f)$label[$f]=ucwords(str_replace('_',' ',
 <?php endforeach; ?>
 </div>
 <?php endforeach; ?>
+
+<h6 class="section-title mt-4">Berkas Pendaftaran</h6>
+<div class="mb-2">
+<?php if(empty($detail['user_id'])): ?>
+    <div class="alert alert-warning mb-0">
+        <i class="fas fa-exclamation-triangle mr-1"></i>
+        Data user_id siswa belum tersedia.
+    </div>
+<?php else: ?>
+    <?php foreach($jenis_berkas_list as $jenis=>$nama): ?>
+        <?php $file_berkas=cariBerkas($detail['user_id'],$jenis); ?>
+        <div class="doc-row">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="mr-2">
+                    <div class="doc-name"><i class="fas fa-file-alt mr-1"></i><?= e($nama) ?></div>
+                    <?php if($file_berkas): ?>
+                        <div class="doc-file"><?= e($file_berkas) ?></div>
+                    <?php else: ?>
+                        <div class="doc-missing">Belum diupload</div>
+                    <?php endif; ?>
+                </div>
+                <?php if($file_berkas): ?>
+                    <a href="lihat_berkas.php?id=<?= (int)$detail['id'] ?>&jenis=<?= urlencode($jenis) ?>" target="_blank" class="btn btn-sm btn-view flex-shrink-0">
+                        <i class="fas fa-eye mr-1"></i> Lihat
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+</div>
 </div></div>
 <?php else: ?>
 <div class="card"><div class="card-body text-center py-5"><i class="fas fa-user-check fa-3x text-success mb-3"></i><h5 class="font-weight-bold">Pilih pendaftar</h5><p class="text-muted mb-0">Klik tombol mata pada daftar untuk melihat data lengkap.</p></div></div>

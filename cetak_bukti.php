@@ -165,7 +165,7 @@ if (!$data) {
                 terlebih dahulu.
             </p>
 
-            <a href="dashboard.php">
+            <a href="dashboard_siswa.php">
                 ← Kembali ke Dashboard
             </a>
 
@@ -222,7 +222,7 @@ function tampil($nilai)
 */
 
 $nomor_pendaftaran =
-    'PMBM-' .
+    'PPDB-' .
     date(
         'Y',
         strtotime($data['created_at'])
@@ -902,7 +902,7 @@ body {
 
 
         <a
-            href="dashboard.php"
+            href="dashboard_siswa.php"
             class="btn btn-back"
         >
             ← Kembali
@@ -1349,7 +1349,7 @@ body {
 
                 <br>
 
-                Panitia PMBM
+                Panitia PPDB
 
 
                 <div class="signature-space"></div>
